@@ -3081,10 +3081,7 @@ tr.selected td {
         padding-bottom: 2rem;
         box-sizing: border-box;
         position: relative;
-    }
-    
-    .page {
-        inset: 1rem; /* Adjust absolute inset for mobile padding */
+        overflow-y: auto;
     }
     
     .header { 

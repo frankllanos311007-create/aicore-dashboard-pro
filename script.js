@@ -902,73 +902,82 @@ document.addEventListener('DOMContentLoaded', () => {
     // ================================================================
     const canvas = document.getElementById('neural-canvas');
     if (canvas) {
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-        const PARTICLE_COUNT = 55;
-        const MAX_DIST = 160;
+        // MOBILE PERFORMANCE FIX: Skip heavy canvas animation on small screens
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+            // On mobile, hide canvas entirely to prevent GPU overload
+            canvas.style.display = 'none';
+        } else {
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            // Reduced particle count for better performance
+            const PARTICLE_COUNT = 35;
+            const MAX_DIST = 120;
+            let animFrameId = null;
 
-        function resizeCanvas() {
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
+            function resizeCanvas() {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
 
-        for (let i = 0; i < PARTICLE_COUNT; i++) {
-            particles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                vx: (Math.random() - 0.5) * 0.6,
-                vy: (Math.random() - 0.5) * 0.6,
-                r: Math.random() * 2 + 1.5
-            });
-        }
-
-        function drawNeural() {
-            const loginScreen = document.getElementById('login-screen');
-            // Stop animation completely when logged in to save mobile memory/GPU
-            if (loginScreen && loginScreen.style.display === 'none') return;
-            
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw connections
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < MAX_DIST) {
-                        const alpha = (1 - dist / MAX_DIST) * 0.45;
-                        ctx.beginPath();
-                        ctx.strokeStyle = `rgba(139, 92, 246, ${alpha})`;
-                        ctx.lineWidth = 0.8;
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                    }
-                }
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    r: Math.random() * 2 + 1
+                });
             }
 
-            // Draw nodes
-            particles.forEach(p => {
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(6, 182, 212, 0.8)';
-                ctx.shadowBlur = 6;
-                ctx.shadowColor = 'rgba(6, 182, 212, 0.5)';
-                ctx.fill();
-                ctx.shadowBlur = 0;
+            function drawNeural() {
+                const loginScreen = document.getElementById('login-screen');
+                // Stop animation completely when logged in to save memory/GPU
+                if (loginScreen && loginScreen.style.display === 'none') return;
 
-                // Move
-                p.x += p.vx;
-                p.y += p.vy;
-                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-            });
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            requestAnimationFrame(drawNeural);
+                // Draw connections
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        // Use squared distance to avoid expensive sqrt when possible
+                        const distSq = dx * dx + dy * dy;
+                        const maxDistSq = MAX_DIST * MAX_DIST;
+                        if (distSq < maxDistSq) {
+                            const dist = Math.sqrt(distSq);
+                            const alpha = (1 - dist / MAX_DIST) * 0.4;
+                            ctx.beginPath();
+                            ctx.strokeStyle = `rgba(139, 92, 246, ${alpha})`;
+                            ctx.lineWidth = 0.7;
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                // Draw nodes
+                particles.forEach(p => {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(6, 182, 212, 0.8)';
+                    ctx.fill();
+
+                    // Move
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                });
+
+                animFrameId = requestAnimationFrame(drawNeural);
+            }
+            drawNeural();
         }
-        drawNeural();
     }
 
     // ================================================================
