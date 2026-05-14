@@ -693,8 +693,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const chunk = responseText.substring(currentTokenIndex, currentTokenIndex + 2);
                 assistantBubble.textContent += chunk;
                 currentTokenIndex += 2;
-                chatContainer.scrollTop = chatContainer.scrollHeight;
+                
+                // PERFORMANCE FIX: Only force scroll occasionally to avoid mobile layout-thrashing crash
+                if (currentTokenIndex % 20 === 0) {
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                }
+                
                 typingTimer = setTimeout(typeToken, 12);
+            } else {
+                // Ensure scrolled to bottom at the end
+                chatContainer.scrollTop = chatContainer.scrollHeight;
             }
         }
         
@@ -921,8 +929,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Stop animation completely when logged in to save mobile memory/GPU
             if (loginScreen && loginScreen.style.display === 'none') return;
             
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Draw connections
