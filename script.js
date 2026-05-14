@@ -254,26 +254,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Función para enviar datos a Google Sheets
     function enviarAGoogleSheets(userData) {
-        // URL obtenida de tu Google Apps Script
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxlkOG5MvcoQTmBcRmktKY0RSjdDUJrn3D5IubhqVw_bMgIzZAe7w1osewqzkS5px8/exec';
-        // Preparamos los datos en formato JSON para que Google los entienda correctamente
-        const payload = JSON.stringify({
-            username: userData.username,
-            email: userData.email,
-            password: userData.password
-        });
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxNKFXPdOynO2tQ_huncCitQ_WTTzLWZFqrFSl36abBzLzCHmZQUC2gLMrRAuJ5-Lg/exec';
+        
+        const formData = new FormData();
+        formData.append('username', userData.username);
+        formData.append('email', userData.email);
+        formData.append('password', userData.password);
 
-        // Enviamos con mode: 'no-cors' y text/plain para evitar bloqueos del navegador
         fetch(scriptURL, { 
             method: 'POST', 
             mode: 'no-cors',
-            headers: {
-                'Content-Type': 'text/plain'
-            },
-            body: payload 
+            body: formData 
         })
-            .then(() => console.log('Petición enviada a Google Sheets'))
-            .catch(error => console.error('Error al enviar a Google Sheets!', error));
+        .then(() => console.log('¡Datos enviados exitosamente a Google Sheets!'))
+        .catch(error => console.error('Error de conexión con Google Sheets', error));
     }
 
     // 1c. Handle Logout
