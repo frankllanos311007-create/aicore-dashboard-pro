@@ -2264,15 +2264,33 @@ tr:hover td {
         padding: 1.25rem;
         max-height: 95vh;
         border-radius: 1.25rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8); /* Reduce heavy shadow */
     }
     .modal-backdrop {
         padding: 0.75rem;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        background: rgba(2, 6, 23, 0.98); /* Solid color instead of blur */
     }
     .modal-image-wrapper {
         height: 150px;
     }
     .playground-chat {
         height: 100px;
+    }
+
+    /* Disable all heavy GPU blur filters on mobile to prevent crashing */
+    * {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+    
+    .orb {
+        display: none !important; /* Huge 100px blur crashes mobile GPUs */
+    }
+    
+    .sidebar, .login-card, .footer {
+        background: rgba(15, 23, 42, 0.98) !important; /* Fallback to solid */
     }
 }
 
