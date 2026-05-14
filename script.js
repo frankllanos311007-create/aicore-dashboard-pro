@@ -917,6 +917,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function drawNeural() {
+            const loginScreen = document.getElementById('login-screen');
+            // Stop animation completely when logged in to save mobile memory/GPU
+            if (loginScreen && loginScreen.style.display === 'none') return;
+            
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
             ctx.clearRect(0, 0, canvas.width, canvas.height);

@@ -2254,6 +2254,26 @@ tr:hover td {
     .header-status {
         display: none;
     }
+    
+    /* Fix Gallery Modal on Mobile */
+    .modal-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .bento-modal {
+        padding: 1.25rem;
+        max-height: 95vh;
+        border-radius: 1.25rem;
+    }
+    .modal-backdrop {
+        padding: 0.75rem;
+    }
+    .modal-image-wrapper {
+        height: 150px;
+    }
+    .playground-chat {
+        height: 100px;
+    }
 }
 
 /* ======================================================
