@@ -3005,6 +3005,7 @@ tr.selected td {
         flex-direction: column;
         width: 100% !important;
         min-width: 100vw;
+        height: 100vh; /* Ensure full viewport height */
         padding-bottom: 70px; /* Space for bottom nav */
     }
     
@@ -3035,11 +3036,17 @@ tr.selected td {
     .menu-indicator { display: none; }
     
     .content-area { 
+        flex: 1; /* Critical: Take up remaining height */
         width: 100% !important;
         max-width: 100vw;
         padding: 1rem; 
         padding-bottom: 2rem;
         box-sizing: border-box;
+        position: relative;
+    }
+    
+    .page {
+        inset: 1rem; /* Adjust absolute inset for mobile padding */
     }
     
     .header { 
